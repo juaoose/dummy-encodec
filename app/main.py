@@ -1,3 +1,4 @@
+import io
 import torchaudio
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
@@ -15,8 +16,10 @@ app = FastAPI()
 @app.post("/")
 def encode(file: UploadFile = File(...)):
 
+    contents = file.file.read()
+
     # Load and pre-process the audio waveform
-    wav, sr = torchaudio.load(file.filename)
+    wav, sr = torchaudio.load(io.BytesIO(contents))
     wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
     # We should be able to use lm, if we run on GPU
