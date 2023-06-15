@@ -1,4 +1,4 @@
-# gpt on azure
+# FastAPI EnCodec compression
 
 ## build
 
