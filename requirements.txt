@@ -1,3 +1,3 @@
 encodec
-flask
+fastapi
 torchaudio
