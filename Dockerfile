@@ -2,11 +2,10 @@ FROM python:3.10-slim
 
 WORKDIR /encodec
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY ./requirements.txt /encodec/requirements.txt
 
-COPY . .
+RUN pip install --no-cache-dir --upgrade -r /encodec/requirements.txt
 
-EXPOSE 7860
+COPY ./app /encodec/app
 
-CMD ["python3", "-u", "./main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

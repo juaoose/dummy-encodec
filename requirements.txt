@@ -1,3 +1,5 @@
 encodec
 fastapi
 torchaudio
+pydantic
+uvicorn
