@@ -19,10 +19,12 @@ def encode(file: UploadFile = File(...)):
     wav, sr = torchaudio.load(file.filename)
     wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
-    # Do not use large model
-    audio_bytes = compress(model, wav, False)
+    # We should be able to use lm, if we run on GPU
+    audio_bytes = compress(model, wav, True)
 
     with open("test.ecdc", 'wb') as f:
         f.write(audio_bytes)
 
+    # TODO(juaoose): might want to use StreamingResponse
+    # once we support chunked encoding
     return FileResponse("test.ecdc")
