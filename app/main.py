@@ -1,15 +1,20 @@
 import io
+
+import torch
 import torchaudio
+from encodec.compress import compress
+from encodec.utils import convert_audio
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 
 from encodec import EncodecModel
-from encodec.compress import compress
-from encodec.utils import convert_audio
 
 # HQ model
 model = EncodecModel.encodec_model_48khz()
 model.set_target_bandwidth(6.0)
+
+# Check for GPU access
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 app = FastAPI()
 
@@ -23,7 +28,7 @@ def encode(file: UploadFile = File(...)):
     wav, sr = torchaudio.load(io.BytesIO(contents))
     wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
-    audio_bytes = compress(model, wav, False)
+    audio_bytes = compress(model, wav, False, device)
 
     with open("test.ecdc", 'wb') as f:
         f.write(audio_bytes)
