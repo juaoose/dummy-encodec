@@ -28,8 +28,11 @@ def encode(file: UploadFile = File(...)):
     wav, sr = torchaudio.load(io.BytesIO(contents))
 
     # Is this how you do it? https://github.com/mimbres/encodec/blob/main/encodec/compress.py#L168
-    model.to(device)
-    wav = wav.to(device)
+    if device == "cuda":
+        print("move model and data to gpu")
+        model.to(device)
+        wav = wav.to(device)
+        sr = sr.to(device)
 
     wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
