@@ -26,9 +26,14 @@ def encode(file: UploadFile = File(...)):
 
     # Load and pre-process the audio waveform
     wav, sr = torchaudio.load(io.BytesIO(contents))
+
+    # Is this how you do it? https://github.com/mimbres/encodec/blob/main/encodec/compress.py#L168
+    model.to(device)
+    wav = wav.to(device)
+
     wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
-    audio_bytes = compress(model, wav, False, device)
+    audio_bytes = compress(model, wav, False)
 
     with open("test.ecdc", 'wb') as f:
         f.write(audio_bytes)
